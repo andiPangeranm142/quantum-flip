@@ -1,5 +1,7 @@
 # Quantum Flip
 
+[![Built on QoreChain](https://build.qorechain.io/badge/quantum-flip.svg)](https://build.qorechain.io/p/quantum-flip)
+
 A free-to-play on-chain coin-flip game on the **QoreChain testnet**
 (`qorechain-diana`, EVM chain id 9800). Built for the QoreChain Developer
 Fest **"Build Before Q-Day"** (Quantum Pass).
@@ -189,8 +191,11 @@ when a flip is refused (`no-pqc-key`, `no-window`, `exhausted`).
 The project is designed to survive a leaked ECDSA key: gameplay needs
 the PQC gate, not just the classical key; the contract has no admin
 function to abuse; and no secret exists anywhere in the repo (keys live
-only in the local, git-ignored `.env`). See `AI_USAGE.md` for the
-development record.
+only in the local, git-ignored `.env`). **Registered for the Q-Day Drill
+on 18 Nov 2026** with a fresh drill account (not the deployer), funded
+with 2 test QOR, ML-DSA-87 key registered, one flip played — see
+`scripts/drill-fund.ts` and `scripts/drill-flip.ts`. See `AI_USAGE.md`
+for the development record.
 
 ## Project layout
 

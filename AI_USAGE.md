@@ -35,10 +35,12 @@ projects already listed on build.qorechain.io before building began.
 4. **Verify at every step.** Contract compiled with `solc` 0.8.24;
    artifact regenerated from compiler output by script (never
    hand-copied); `tsc --noEmit` typecheck; automated contract tests on a
-   local EVM; `vite build` for the frontend. On-chain verification
-   (deploy + hybrid-signed window transaction) is scripted and ready but
-   is still pending testnet funding — see the README's deployment status.
-   Nothing in this repo claims an on-chain result that has not happened.
+   local EVM; `vite build` for the frontend. On-chain verification was
+   done the same day: the contract deployed at
+   `0x4a8de5795545fb081cb875e4ba8667290bb11c6f` (deploy tx
+   `0x1060dc1c…`, hybrid-signed window tx `4368F6F6…`), and every
+   transaction hash in this repo was read back from the chain. Nothing
+   in this repo claims an on-chain result that has not happened.
 5. **Secrets discipline.** A fresh testnet-only wallet was generated for
    this project; its mnemonic and private key live only in the local,
    git-ignored `.env` and a mode-`600` file outside the repo. The repo
@@ -85,10 +87,12 @@ Both fixes are covered by the passing test suite (`npm test`: 5/5).
   quality bar ("no mistakes, however small; maximise the chance of
   winning").
 - Owns the accounts and identity steps the agent cannot do: the GitHub
-  account the repo will live under, the Dashboard sign-in for the
+  account the repo lives under, the Dashboard sign-in for the
   faucet claim that funds the deployer, the fest registration
   (GitHub OAuth, X, QoreX), and the final submission.
-- Will record/approve the demo video and any submission text.
+- Reviewed and approved the demo video and the submission text, and
+  approved the Q-Day Drill sign-up (with a fresh drill account, not the
+  deployer).
 
 ## Verification status (14 Nov 2026)
 
@@ -99,7 +103,35 @@ Both fixes are covered by the passing test suite (`npm test`: 5/5).
 | `npm run typecheck` | Passes |
 | `npm run build` (frontend) | Passes |
 | No secrets in repo / git history | Checked (see below) |
-| Testnet deploy + hybrid-signed tx | **Pending faucet funding** |
+| Testnet deploy + hybrid-signed tx | **Done 14 Nov 2026 04:15 WIB** — contract `0x4a8de5…11c6f`, deploy tx `0x1060dc1c…`, window tx `4368F6F6…` |
+| Demo video (107 s, 2 real flips) | Done + verified on-chain |
+| Live demo (GitHub Pages) | Done — https://andipangeranm142.github.io/quantum-flip/ |
+| Q-Day Drill registration | Done — fresh drill account, 1 flip played |
+
+## Post-build work (same day, 14 Nov 2026)
+
+After the initial build, the agent continued under the same workflow:
+
+- **Explorer-link fix.** Recording the demo video exposed a real bug:
+  the explorer's `/tx/` route only resolves Cosmos hashes, so the app's
+  EVM-hash links landed on "Transaction not found". Fixed in the app,
+  the README, and `deploy.ts` (which now derives the Cosmos hash for
+  every transaction it sends).
+- **Live demo.** Deployed the frontend to GitHub Pages. The REST API
+  sends no CORS headers, so the window-status panel now says so plainly
+  on a static host instead of showing a raw error; flips still work
+  because the EVM RPC allows browser requests and the flip buttons were
+  never gated on that read.
+- **Q-Day Drill.** Generated a fresh testnet-only drill account,
+  funded it from the deployer, registered its ML-DSA-87 key, opened a
+  window, played one flip, and registered it for the drill
+  (`scripts/drill-fund.ts`, `scripts/drill-flip.ts`).
+- **Demo video.** Recorded end-to-end (real app, two real testnet
+  flips), frames reviewed by the agent, both transactions verified
+  on-chain, no secrets in any frame.
+- **Audits.** The repo, the project page, the contract, and the rules
+  were re-checked end-to-end before the deadline; every claim in this
+  file was re-verified against the chain, the repo, or the fest site.
 
 ## Secrets check
 
