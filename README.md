@@ -20,19 +20,18 @@ nothing to steal and no admin key to compromise.
 | Network | QoreChain testnet `qorechain-diana` (EVM chain id 9800) |
 | Deployer (EVM) | `0x32fA73e4Eb17d13873D074cdc44105625D48eCD6` |
 | Deployer (Cosmos) | `qor1xta88e8tzlgnsu7swnxugsg9vfw53mxk94q7tp` |
-| Contract | _not yet deployed — deployment is pending a testnet faucet claim; see below_ |
+| Contract | [`0x4a8de5795545fb081cb875e4ba8667290bb11c6f`](https://explore.qore.network/address/0x4a8de5795545fb081cb875e4ba8667290bb11c6f) |
+| Deploy tx | [`0x1060dc1c7be190c7f173119e9c61b5d6803eca1bd6eb1097e7d7e13951198a3a`](https://explore.qore.network/tx/0x1060dc1c7be190c7f173119e9c61b5d6803eca1bd6eb1097e7d7e13951198a3a) |
+| Demo flip tx | [`0x217158b04f3de4f272ec97cafa95f366600dcc13f30d3a0c3619441c96dd15bc`](https://explore.qore.network/tx/0x217158b04f3de4f272ec97cafa95f366600dcc13f30d3a0c3619441c96dd15bc) (called heads → HEADS, won) |
+| PQC key registration | `633522988E1BE61B7118535F14B8CE38FF8EF18579DF56266D321002C87E708D` (native tx) |
+| EVM window opened | `4368F6F6AF570374FC45A012C0D510D6409C99482FB0895A0A09CDF071A61BEF` (hybrid-signed native tx; 1200 blocks, 10 txs) |
 | Explorer | https://explore.qore.network (switch to Testnet) |
 
-> **Deployment status (14 Nov 2026):** the code, tests and scripts are
-> complete and verified locally. The on-chain deployment is waiting on
-> testnet QOR from the Dashboard faucet
-> ([dashboard.qorechain.io/faucet](https://dashboard.qorechain.io/faucet)),
-> which requires a signed-in Dashboard account — there is no public,
-> unauthenticated faucet endpoint (verified against the published
-> `@qorechain/sdk` 0.14.0 and `@qorechain/rdk` 0.9.0, neither of which
-> bakes in a faucet hostname). Once the deployer address above holds test
-> QOR, deployment is a single command (`npm run deploy`). This section
-> will be updated with the contract address and transaction hashes then.
+> **Deployed 14 Nov 2026** (04:15 WIB): the contract is live on the
+> QoreChain testnet with one demo flip already played (totalFlips 1,
+> totalWins 1). The deployer was funded with 100 test QOR from the
+> Dashboard faucet. Full details in
+> [`deployments/testnet.json`](deployments/testnet.json).
 
 ## How to play
 
