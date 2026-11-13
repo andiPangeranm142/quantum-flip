@@ -128,6 +128,8 @@ async function main(): Promise<void> {
     abi: quantumFlipAbi,
     functionName: "flip",
     args: [guess === "heads"],
+    account: wallet.account ?? null,
+    chain: wallet.chain,
   });
   const receipt = await client.publicClient.waitForTransactionReceipt({ hash: flipHash });
   console.log(`flip tx:  ${flipHash}`);

@@ -63,7 +63,17 @@ function WindowStatus({ address, chainId }: { address: `0x${string}`; chainId: n
   });
   if (!rest) return <p>Unknown network.</p>;
   if (isLoading) return <p>Reading the EVM window...</p>;
-  if (error) return <p>Could not read the window: {error.message}</p>;
+  // The window status comes from the native-lane REST API, which sends no
+  // CORS headers — it is only readable when the app runs behind the /lcd
+  // proxy (local dev/preview). On a plain static host this read fails, but
+  // flips still work when the wallet already has a live window open.
+  if (error)
+    return (
+      <p>
+        Could not read the EVM window status from here. If you already opened a
+        window from QoreX, you can still flip; otherwise open one from QoreX first.
+      </p>
+    );
   if (!data?.found) {
     return (
       <p>

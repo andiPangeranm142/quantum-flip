@@ -31,10 +31,16 @@ nothing to steal and no admin key to compromise.
 > the explorer's `/tx/` route only resolves Cosmos hashes.
 
 > **Deployed 14 Nov 2026** (04:15 WIB): the contract is live on the
-> QoreChain testnet with one demo flip already played (totalFlips 1,
-> totalWins 1). The deployer was funded with 100 test QOR from the
-> Dashboard faucet. Full details in
+> QoreChain testnet with 4 flips played so far (totalFlips 4, totalWins 3,
+> including the Q-Day Drill account's first flip). The deployer was funded
+> with 100 test QOR from the Dashboard faucet. Full details in
 > [`deployments/testnet.json`](deployments/testnet.json).
+>
+> **Live demo:** https://andipangeranm142.github.io/quantum-flip/ — connect
+> QoreX (or any injected wallet) on the QoreChain testnet, open an EVM window
+> from QoreX, and flip. The window-status panel cannot read the native-lane
+> REST API from a static host (it sends no CORS headers), so it says so and
+> flips still work when a window is open.
 
 ## How to play
 
