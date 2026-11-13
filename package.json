@@ -1,0 +1,26 @@
+{
+  "name": "quantum-flip",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Quantum Flip: a free-to-play on-chain coin-flip game on the QoreChain testnet (qorechain-diana). Every flip is an EVM transaction admitted only inside a post-quantum authorisation window, so each move is quantum-safe by construction.",
+  "scripts": {
+    "compile": "npx solc@0.8.24 --optimize --abi --bin -o out contracts/QuantumFlip.sol && node scripts/build-artifact.mjs",
+    "deploy": "tsx --env-file=.env scripts/deploy.ts",
+    "window": "tsx --env-file=.env scripts/window.ts",
+    "test": "tsx --test test/*.test.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@cosmjs/stargate": "^0.39.0",
+    "@qorechain/evm": "^0.14.0",
+    "@qorechain/sdk": "^0.14.0",
+    "viem": "^2.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.7.5",
+    "ganache": "^7.9.2",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.3"
+  }
+}
