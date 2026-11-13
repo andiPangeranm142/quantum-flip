@@ -19,7 +19,7 @@ import {
 } from "wagmi";
 
 import { quantumFlipAbi } from "../contracts/QuantumFlip.artifact.js";
-import { CONTRACT_DEPLOYED, EXPLORER_URL, QUANTUM_FLIP_ADDRESS, TESTNET_CHAIN_ID } from "./config.js";
+import { CONTRACT_DEPLOYED, QUANTUM_FLIP_ADDRESS, TESTNET_CHAIN_ID } from "./config.js";
 
 const REMEDY: Record<EvmWindowRejection, string> = {
   "no-pqc-key": "This account has no registered ML-DSA-87 key. Register one on the native lane first.",
@@ -169,10 +169,10 @@ function FlipButtons({
       {receipt.isLoading && <p>Confirming on-chain...</p>}
       {write.data && (
         <p>
-          Transaction:{" "}
-          <a href={`${EXPLORER_URL}/tx/${write.data}`} target="_blank" rel="noreferrer">
-            {shorten(write.data)}
-          </a>
+          {/* The explorer's /tx/ route only resolves Cosmos transaction
+              hashes, not EVM hashes, so the hash is shown as text rather
+              than a link that would land on "Transaction not found". */}
+          Transaction: <code>{shorten(write.data)}</code>
         </p>
       )}
       {reverted && <p>The transaction was reverted on-chain — no flip happened.</p>}
