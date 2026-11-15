@@ -17,6 +17,12 @@ const proxy = {
 
 export default defineConfig({
   plugins: [react()],
+  // The live demo is served from the /quantum-flip/ subpath on GitHub
+  // Pages — WITHOUT this base, a plain `npm run build` emits root-absolute
+  // asset URLs (/assets/...) that 404 on the live site. (A rebuild on
+  // 15 Nov 2026 without the base broke the demo this way; the base is now
+  // part of the config so it cannot happen again.)
+  base: "/quantum-flip/",
   server: { port: 5173, proxy },
   preview: { proxy },
 });
