@@ -166,13 +166,18 @@ source.
 ### Randomness — read this
 
 The coin is derived from `keccak256(previous block hash, sender, flip
-count)`. The previous block hash is fixed by the time a flip executes, so
-the outcome is settled on-chain and identical for everyone reading the
-block. That is unpredictable enough for a **free testnet game**. It is
-**not** suitable for real stakes: a block producer could influence a
-block hash, and anyone can simulate the outcome of a pending flip. If
-this game ever carried value, it would need commit–reveal or a VRF. The
-frontend says the same thing in its footer.
+count)`. All three inputs are public before a flip is sent, so the
+outcome is fully simulatable: anyone can compute the result off-chain
+and only submit flips they already know will win, and a block producer
+could influence a block hash or decline to include losing transactions.
+The outcome is settled on-chain and identical for everyone reading the
+block, but it is **not** unpredictable — it is only uncheatable for a
+casual player who does not simulate. Streaks and the leaderboard can
+therefore be ground, even though the game is free and carries no value.
+That is acceptable for a **free testnet game** and **not** suitable for
+real stakes: if this game ever carried value, it would need
+commit–reveal or a VRF. The frontend footer carries a shorter version of
+the same warning.
 
 ### The quantum-safe gate
 

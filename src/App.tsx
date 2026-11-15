@@ -390,9 +390,10 @@ export function App() {
       <footer>
         <hr />
         <p>
-          Honest notes: the coin result is derived from the block hash — unpredictable enough for a
-          free testnet game, but NOT suitable for real stakes. This game holds no funds and has no
-          admin or owner; there is nothing to deposit and nothing to withdraw.
+          Honest notes: the coin result is derived from the block hash and is fully simulatable
+          before sending — fine for a free testnet game, but NOT suitable for real stakes, and
+          streaks can be ground. This game holds no funds and has no admin or owner; there is
+          nothing to deposit and nothing to withdraw.
         </p>
       </footer>
     </main>
