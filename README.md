@@ -33,9 +33,10 @@ nothing to steal and no admin key to compromise.
 > the explorer's `/tx/` route only resolves Cosmos hashes.
 
 > **Deployed 14 Nov 2026** (04:15 WIB): the contract is live on the
-> QoreChain testnet. As of 16 Nov 2026 (~05:00 WIB), 20 flips have been
-> played on-chain (totalFlips 20, totalWins 12, 3 players), including the
-> Q-Day Drill account's first flip. The deployer was funded
+> QoreChain testnet. As of 18 Nov 2026 (Q-Day Drill day), 21 flips have
+> been played on-chain (totalFlips 21, totalWins 12, 3 players),
+> including the Q-Day Drill account's flip, which landed TAILS (the
+> drill proof transaction). The deployer was funded
 > with 100 test QOR from the Dashboard faucet. Full details in
 > [`deployments/testnet.json`](deployments/testnet.json).
 >
