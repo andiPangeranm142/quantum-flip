@@ -12,9 +12,13 @@ pragma solidity ^0.8.24;
 ///      The game holds no funds and has no owner or privileged function, so
 ///      there is nothing to steal and no admin key to compromise.
 ///
-///      Randomness is derived from the previous block hash. That is
-///      unpredictable enough for a free testnet game, and it is NOT
-///      suitable for real stakes: see the README.
+///      Randomness: the coin is keccak256(previous block hash, sender,
+///      flip count) — but on the Diana testnet the EVM BLOCKHASH opcode
+///      returns 0 (verified 19 Nov 2026, see scripts/probe-blockhash.mjs
+///      and docs/randomness.md), so the outcome is fully deterministic
+///      from (sender, flip count) and predictable by anyone. This game
+///      demonstrates PQ-window-gated play, not randomness; it is NOT
+///      suitable for real stakes. See the README.
 contract QuantumFlip {
     /// @notice Per-player statistics.
     struct PlayerStats {
@@ -57,9 +61,12 @@ contract QuantumFlip {
     /// @param guessHeads True to call heads, false to call tails.
     /// @return won Whether the guess matched the coin.
     function flip(bool guessHeads) external returns (bool won) {
-        // Blockhash-derived randomness: the previous block hash is fixed by
-        // the time this transaction executes, so the outcome is settled
-        // on-chain and identical for everyone reading the block.
+        // Coin outcome: keccak256(previous block hash, sender, flip
+        // count). On the Diana testnet the BLOCKHASH opcode returns 0
+        // (see docs/randomness.md), so this is keccak256(0, sender,
+        // totalFlips) — fully deterministic and predictable by anyone.
+        // The outcome is still settled on-chain and identical for
+        // everyone reading the block.
         bytes32 randomness = keccak256(
             abi.encodePacked(blockhash(block.number - 1), msg.sender, totalFlips)
         );

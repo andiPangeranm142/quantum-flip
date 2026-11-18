@@ -165,21 +165,36 @@ source.
   are global counters.
 - No value is accepted, no funds are held, and there is no owner.
 
-### Randomness — read this
+### Randomness — read this (corrected 19 Nov 2026)
 
-The coin is derived from `keccak256(previous block hash, sender, flip
-count)`. All three inputs are public before a flip is sent, so the
-outcome is fully simulatable: anyone can compute the result off-chain
-and only submit flips they already know will win, and a block producer
-could influence a block hash or decline to include losing transactions.
-The outcome is settled on-chain and identical for everyone reading the
-block, but it is **not** unpredictable — it is only uncheatable for a
-casual player who does not simulate. Streaks and the leaderboard can
-therefore be ground, even though the game is free and carries no value.
-That is acceptable for a **free testnet game** and **not** suitable for
-real stakes: if this game ever carried value, it would need
-commit–reveal or a VRF. The frontend footer carries a shorter version of
-the same warning.
+The coin is `keccak256(previous block hash, sender, flip count)` — but
+on the Diana testnet the EVM `BLOCKHASH` opcode **always returns 0**.
+We verified this directly on-chain (19 Nov 2026): an `eth_call` probe
+with a state override runs `BLOCKHASH(block.number - 1)` and gets back
+`0x0000…0000`, while the same block's header hash (via
+`eth_getBlockByNumber`) is a normal non-zero hash. The opcode simply is
+not wired up on this chain. Reproduce it yourself, no key needed:
+
+```sh
+node scripts/probe-blockhash.mjs
+```
+
+So on Diana the outcome is `keccak256(0, sender, totalFlips)` — **fully
+deterministic** from two public inputs, and **anyone can compute the
+result of the next flip before it is sent**. The probe script proves
+this too: its off-chain prediction matched the on-chain `flip`
+simulation for every sender tested. Streaks and the leaderboard can
+therefore be ground at will, even though the game is free and carries
+no value.
+
+That is acceptable for a **free testnet game whose point is the
+post-quantum gate**, and **not** suitable for real stakes: if this game
+ever carried value, it would need commit–reveal or a VRF. What the game
+demonstrates is PQ-window-gated play — every flip is an EVM transaction
+admitted only inside a hybrid-signed authorisation window — plus
+on-chain statistics, not randomness. Full write-up, including how the
+finding was verified: [`docs/randomness.md`](docs/randomness.md). The
+frontend footer carries a shorter version of the same warning.
 
 ### The quantum-safe gate
 
@@ -214,6 +229,9 @@ scripts/
   deploy.ts                  # deploy + demo flip + record deployments/testnet.json
   window.ts                  # PQC key registration + EVM window helper
   build-artifact.mjs         # regenerate the artifact from solc output
+  probe-blockhash.mjs        # read-only proof that BLOCKHASH returns 0 on Diana
+docs/
+  randomness.md              # what we found on-chain: BLOCKHASH=0, fully deterministic flips
 src/
   App.tsx                    # the game UI
   config.ts                  # contract address (env) + chain/explorer constants
