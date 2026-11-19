@@ -22,7 +22,8 @@
  *
  * Note: the totals and leaderboard only render for a connected wallet on
  * the testnet, so this check (no wallet) verifies the unconnected view:
- * title, connect prompt, and the honest-randomness footer. Live totals
+ * title, connect prompt, the simulated mock flip, the on-chain streak
+ * badges (public reads), and the honest-randomness footer. Live totals
  * are verified separately with eth_call against the contract.
  */
 import { createRequire } from "node:module";
@@ -74,6 +75,12 @@ page.on("requestfailed", (req) => errors.push(`requestfailed: ${req.url()} ${req
 
 await page.goto(url, { waitUntil: "networkidle", timeout: 60000 });
 await page.waitForTimeout(5000);
+// The streak-badges section reads live chain data; give it time to arrive
+// before screenshotting (its absence is a failure, checked below).
+await page.waitForFunction(
+  () => document.body.innerText.includes("Double Up"),
+  { timeout: 30000 },
+).catch(() => {});
 await page.screenshot({ path: screenshotPath, fullPage: true });
 
 const text = await page.evaluate(() => document.body.innerText);
@@ -81,6 +88,11 @@ const checks = {
   "title Quantum Flip": text.includes("Quantum Flip"),
   "intro (post-quantum authorisation window)": text.includes("post-quantum authorisation window"),
   "connect prompt": text.includes("Connect a wallet to play"),
+  "mock mode labelled simulated": text.includes("Try it without a wallet (simulated)") && text.includes("SIMULATED"),
+  "mock mode honest disclaimer": text.includes("not an on-chain transaction"),
+  "streak badges section": text.includes("Streak badges"),
+  "badge tiers listed": text.includes("Hat Trick") && text.includes("Hot Streak"),
+  "real on-chain badge shown (Double Up)": text.includes("Double Up"),
   "honest-randomness footer": text.includes("fully simulatable"),
   "no fatal error text": !/something went wrong|failed to load|white screen|not deployed yet/i.test(text),
 };

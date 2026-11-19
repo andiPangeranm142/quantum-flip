@@ -1,0 +1,17 @@
+{
+  "network": "qorechain-diana",
+  "chainId": 9800,
+  "contract": "0x9876801337ce9b206aa8d65cc35887cf51a0c829",
+  "flipContract": "0x4a8de5795545fb081cb875e4ba8667290bb11c6f",
+  "deployer": "0x32fA73e4Eb17d13873D074cdc44105625D48eCD6",
+  "deployTx": "0x9e0271c3b36b40d86da4ced3039eea51e5da6f1cdf25813d4a40ca808f137fa9",
+  "deployBlock": "10368157",
+  "demoClaimTx": "0xec2efee832c4259ebf9c364755d5decc3f73433aec319b7b25e384e0c24df353",
+  "demoClaimBlock": "10368158",
+  "demoClaimRecipient": "0x32fA73e4Eb17d13873D074cdc44105625D48eCD6",
+  "demoClaimTierId": 0,
+  "demoClaimTierName": "Double Up",
+  "deployerBestStreakAtClaim": "4",
+  "explorerContract": "https://explore.qore.network/address/0x9876801337ce9b206aa8d65cc35887cf51a0c829",
+  "deployedAt": "2026-11-19T10:07:52.755Z"
+}

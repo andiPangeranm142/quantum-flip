@@ -22,3 +22,6 @@ typechain-types/
 # Logs
 *.log
 npm-debug.log*
+
+# Local scratch (probes, screenshots, raw video takes) — never commit
+.work/

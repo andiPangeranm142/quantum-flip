@@ -1,13 +1,24 @@
 import react from "@vitejs/plugin-react";
+import { HttpsProxyAgent } from "https-proxy-agent";
 import { defineConfig } from "vite";
 
 // The public REST APIs send no CORS headers, so the browser reaches them
 // through the dev (and preview) server: /lcd-testnet and /lcd-mainnet are
 // forwarded to each network's REST endpoint (see REST_PROXY in src/App.tsx).
 // In production, serve the app behind a proxy that does the same.
+//
+// The dev/preview server's own HTTP proxy (http-proxy) does not read the
+// https_proxy environment variable, so in a sandbox whose egress goes
+// through a forward proxy the upstream TLS handshake fails (HTTP 500,
+// "wrong version number") and the window-status panel can never load.
+// When https_proxy is set, route the upstream connection through it;
+// otherwise the proxy connects directly, as before.
+const egressProxy = process.env.https_proxy ?? process.env.HTTPS_PROXY ?? "";
+const proxyAgent = egressProxy ? new HttpsProxyAgent(egressProxy) : undefined;
 const rest = (target: string) => ({
   target,
   changeOrigin: true,
+  ...(proxyAgent ? { agent: proxyAgent } : {}),
   rewrite: (p: string) => p.replace(/^\/lcd-(testnet|mainnet)/, ""),
 });
 const proxy = {

@@ -25,6 +25,9 @@ nothing to steal and no admin key to compromise.
 | Contract | [`0x4a8de5795545fb081cb875e4ba8667290bb11c6f`](https://explore.qore.network/address/0x4a8de5795545fb081cb875e4ba8667290bb11c6f) |
 | Deploy tx | [`0x1060dc1c7be190c7f173119e9c61b5d6803eca1bd6eb1097e7d7e13951198a3a`](https://explore.qore.network/tx/7F92AE22A83D2DFCE49EE0F5C6D1DFF1A6E90B2B428D77AB0585D61E1B8D3E9A) |
 | Demo flip tx | [`0x217158b04f3de4f272ec97cafa95f366600dcc13f30d3a0c3619441c96dd15bc`](https://explore.qore.network/tx/80E15C10888A6887FD1FA328CE56F208EC2251DF8EA7EF175A91B539ADFAFB57) (called heads → HEADS, won) |
+| StreakBadge contract | [`0x9876801337ce9b206aa8d65cc35887cf51a0c829`](https://explore.qore.network/address/0x9876801337ce9b206aa8d65cc35887cf51a0c829) |
+| StreakBadge deploy tx | `0x9e0271c3b36b40d86da4ced3039eea51e5da6f1cdf25813d4a40ca808f137fa9` (block 10368157) |
+| First badge issued | `0xec2efee832c4259ebf9c364755d5decc3f73433aec319b7b25e384e0c24df353` (block 10368158) — "Double Up" (tier 0) to the deployer, whose bestStreak was 4 |
 | PQC key registration | `633522988E1BE61B7118535F14B8CE38FF8EF18579DF56266D321002C87E708D` (native tx) |
 | EVM window opened | `4368F6F6AF570374FC45A012C0D510D6409C99482FB0895A0A09CDF071A61BEF` (hybrid-signed native tx; 1200 blocks, 10 txs) |
 | Explorer | https://explore.qore.network (switch to Testnet) |
@@ -33,29 +36,38 @@ nothing to steal and no admin key to compromise.
 > the explorer's `/tx/` route only resolves Cosmos hashes.
 
 > **Deployed 14 Nov 2026** (04:15 WIB): the contract is live on the
-> QoreChain testnet. As of 18 Nov 2026 (Q-Day Drill day), 21 flips have
-> been played on-chain (totalFlips 21, totalWins 12, 3 players),
-> including the Q-Day Drill account's flip, which landed TAILS (the
-> drill proof transaction). The deployer was funded
-> with 100 test QOR from the Dashboard faucet. Full details in
-> [`deployments/testnet.json`](deployments/testnet.json).
+> QoreChain testnet. As of 19 Nov 2026, 22 flips have been played
+> on-chain (totalFlips 22, totalWins 13, 3 players), including the
+> Q-Day Drill account's flip, which landed TAILS (the drill proof
+> transaction), and the video flip recorded for the demo video v2
+> (HEADS, won). The deployer was funded with 100 test QOR from the
+> Dashboard faucet. Full details in [`deployments/testnet.json`](deployments/testnet.json)
+> and [`deployments/streak-badge-testnet.json`](deployments/streak-badge-testnet.json).
 >
 > **Live demo:** https://andipangeranm142.github.io/quantum-flip/ — connect
 > QoreX (or any injected wallet) on the QoreChain testnet, open an EVM window
-> from QoreX, and flip. The window-status panel cannot read the native-lane
-> REST API from a static host (it sends no CORS headers), so it says so and
-> flips still work when a window is open.
+> from QoreX, and flip. No wallet? The demo also has a clearly-labelled
+> **simulated** flip (browser-only, not on-chain) and a public streak-badge
+> panel that reads live chain data without a wallet. The window-status panel
+> cannot read the native-lane REST API from a static host (it sends no CORS
+> headers), so it says so and flips still work when a window is open.
 
 ## How to play
 
 1. Open the app (`npm run dev`, then http://localhost:5173).
-2. Connect **QoreX** (or any injected EVM wallet) on the QoreChain Testnet.
-3. Make sure an EVM authorisation window is open for your account — the
+2. Without a wallet you can still try a **simulated** flip — it runs
+   only in your browser, is labelled SIMULATED everywhere, sends no
+   transaction, and changes no stats or badges.
+3. To play for real, connect **QoreX** (or any injected EVM wallet) on
+   the QoreChain Testnet.
+4. Make sure an EVM authorisation window is open for your account — the
    app shows the window status live. Open one from QoreX (EVM access
    window) or with `npm run window open` (see below).
-4. Call **Heads** or **Tails**. The contract settles the flip on-chain and
+5. Call **Heads** or **Tails**. The contract settles the flip on-chain and
    the app shows the result, your stats, and the transaction hash.
-5. The leaderboard ranks players by best win streak.
+6. The leaderboard ranks players by best win streak. Reach a best streak
+   of 2, 3 or 5 to claim a **streak badge** (Double Up, Hat Trick, Hot
+   Streak) from the StreakBadge contract — see below.
 
 ## Quick start
 
@@ -117,14 +129,29 @@ writes `deployments/testnet.json` with the addresses and explorer links.
 The script refuses to run on any chain other than the testnet (chain id
 9800).
 
+### Deploy the StreakBadge companion contract
+
+```sh
+npm run deploy-streak-badge
+```
+
+This deploys `StreakBadge` (a separate contract — the flip contract is
+never modified or redeployed), verifies on-chain that it points at the
+live flip contract and exposes three tiers, claims the tier-0 "Double
+Up" badge for the deployer from the deployer's real recorded bestStreak,
+re-verifies the badge state on-chain, and writes
+`deployments/streak-badge-testnet.json`. Same prerequisites and
+testnet-only guard as `npm run deploy`.
+
 ### Run the web app
 
 ```sh
-VITE_QUANTUM_FLIP_ADDRESS=<deployed contract address> npm run dev
+VITE_QUANTUM_FLIP_ADDRESS=<deployed contract address> VITE_STREAK_BADGE_ADDRESS=<deployed badge contract address> npm run dev
 ```
 
 Then open http://localhost:5173. Without the contract address the app shows
-a "not deployed yet" notice instead of the game.
+a "not deployed yet" notice instead of the game; without the badge
+address the badge section is hidden.
 
 ### Tests
 
@@ -134,22 +161,28 @@ npm run typecheck
 npm run build   # typecheck + production frontend build
 ```
 
-The contract tests deploy the real compiled bytecode to a local chain and
-check event/state consistency, two-player independence, and totals/streak
-invariants over many flips. The test accounts are Ganache's built-in
-deterministic test accounts — public test keys that exist only on the
-throwaway local chain.
+16 tests, all passing: the contract tests deploy the real compiled
+bytecode to a local chain and check event/state consistency, two-player
+independence, totals/streak invariants over many flips, streak reset on
+a loss, and `getStats`/`stats` agreement — plus the StreakBadge suite,
+which deploys both contracts, plays real flips to build streaks, and
+checks tier thresholds, on-chain eligibility reads, badge issuance
+(events + state), double-claim and unknown-tier reverts, per-player
+independence, and zero-address deployment rejection. The test accounts
+are Ganache's built-in deterministic test accounts — public test keys
+that exist only on the throwaway local chain.
 
-### Recompile the contract
+### Recompile the contracts
 
 ```sh
 npm run compile
 ```
 
-This runs `solc` 0.8.24 and regenerates the committed artifact
-(`contracts/QuantumFlip.artifact.ts`, ABI + creation bytecode) from
-`contracts/QuantumFlip.sol`, so the artifact can never drift from the
-source.
+This runs `solc` 0.8.24 and regenerates the committed artifacts
+(`contracts/QuantumFlip.artifact.ts` and
+`contracts/StreakBadge.artifact.ts`, ABI + creation bytecode) from
+`contracts/QuantumFlip.sol` and `contracts/StreakBadge.sol`, so the
+artifacts can never drift from the sources.
 
 ## How it works
 
@@ -164,6 +197,29 @@ source.
   `playerCount()` enumerate the leaderboard; `totalFlips` / `totalWins`
   are global counters.
 - No value is accepted, no funds are held, and there is no owner.
+
+### Streak badges (`contracts/StreakBadge.sol`)
+
+A separate companion contract, deployed 19 Nov 2026
+(`0x9876801337ce9b206aa8d65cc35887cf51a0c829`). It issues on-chain
+badges for win streaks — three tiers: **Double Up** (best streak ≥ 2),
+**Hat Trick** (≥ 3), **Hot Streak** (≥ 5). A player claims a tier with
+`claim(tierId)`; the contract checks eligibility **on-chain at claim
+time** by reading `QuantumFlip.getStats(msg.sender).bestStreak`. No
+off-chain oracle, no admin, no allowlist; one claim per tier per player;
+`badgesOf(player)` / `eligibleTiers(player)` are public views. Badges
+are non-transferable records, not ERC-721 tokens.
+
+What it reads, exactly: only the `bestStreak` field of the flip
+contract's per-player stats. That is the only streak data the flip
+contract exposes, so the badge contract cannot verify individual flip
+outcomes, the order of flips, or when a streak happened — only the
+recorded bestStreak value. And a badge proves only that recorded
+value: on this testnet flip outcomes are deterministic (see above), so
+streaks — and therefore badges — can be ground at will. A badge is a
+record of play, not of luck. The first badge was issued to the deployer
+(bestStreak 4) in the deploy transaction's demo claim; see
+[`deployments/streak-badge-testnet.json`](deployments/streak-badge-testnet.json).
 
 ### Randomness — read this (corrected 19 Nov 2026)
 
@@ -225,22 +281,30 @@ for the development record.
 contracts/
   QuantumFlip.sol            # the game contract
   QuantumFlip.artifact.ts    # compiled ABI + creation bytecode (generated)
+  StreakBadge.sol            # streak-badge companion contract
+  StreakBadge.artifact.ts    # compiled ABI + creation bytecode (generated)
 scripts/
   deploy.ts                  # deploy + demo flip + record deployments/testnet.json
+  deploy-streak-badge.ts     # deploy StreakBadge + demo badge claim + record deployments/streak-badge-testnet.json
   window.ts                  # PQC key registration + EVM window helper
-  build-artifact.mjs         # regenerate the artifact from solc output
+  build-artifact.mjs         # regenerate the artifacts from solc output
   probe-blockhash.mjs        # read-only proof that BLOCKHASH returns 0 on Diana
+  render-check.mjs           # Playwright demo render check (mock mode + badges)
 docs/
   randomness.md              # what we found on-chain: BLOCKHASH=0, fully deterministic flips
+  demo-video.md              # demo video plan + recording reports (v1, v2)
+  demo.mp4                   # demo video v2 (1:49, silent, burned-in captions)
 src/
-  App.tsx                    # the game UI
-  config.ts                  # contract address (env) + chain/explorer constants
+  App.tsx                    # the game UI (mock mode, badges, leaderboard)
+  config.ts                  # contract addresses (env) + chain/explorer constants
   wagmi.ts                   # wagmi + RainbowKit config, QoreX first
   main.tsx                   # providers
 test/
-  quantum-flip.test.ts       # contract tests on a local EVM
+  quantum-flip.test.ts       # flip contract tests on a local EVM
+  streak-badge.test.ts       # StreakBadge tests on a local EVM (both contracts)
 deployments/
   testnet.json               # written by `npm run deploy` (after deployment)
+  streak-badge-testnet.json  # written by `npm run deploy-streak-badge`
 ```
 
 ## Credits

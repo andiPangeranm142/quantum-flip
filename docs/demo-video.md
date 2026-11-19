@@ -119,3 +119,74 @@ the EVM hash) lands on a "Transaction not found" page, because the
 explorer's `/tx/` route only resolves Cosmos transaction hashes. The
 video works around it (see above), but the link should be fixed or
 removed before judges click it.
+
+## Final video v2 (recorded 19 Nov 2026, one take)
+
+Re-recorded after the quality push: the demo now has a simulated mock
+mode (no wallet needed) and the StreakBadge companion contract, so the
+video shows both. Same recording account and setup as v1; the recorder
+is `~/workspace/qorechain/video/record-v2.mjs` and the renderer
+`~/workspace/qorechain/video/render-v2.mjs` (caption timings are read
+from the take's meta file, not hardcoded).
+
+- **File:** `docs/demo.mp4` — MP4 H.264, 1280×720, 25 fps, silent
+  (ffprobe-verified: one video stream, no audio track).
+- **Duration:** 108.6 s (1:49) — under the 3:00 limit.
+- **Size:** 2.4 MB.
+- **Recording account (testnet only):**
+  EVM `0x97846f217f6b0Cb0e26A72358C97733ebFf4B259`,
+  Cosmos `qor1j7zx7gtldvxtpcn2wg6ce9mn86llfvjerkaxee`.
+  Fresh EVM window (1200 blocks, 10 txs) opened just before the take
+  (native tx `0EECD49CE31A21064B11338AB08025A637A7CE3ED197ABA873837D05F8B8C974`).
+
+| # | Time | What is shown |
+| --- | --- | --- |
+| 1 | 0:02–0:14 | App loaded, unconnected state, mock mode visible. |
+| 2 | 0:14–0:26 | Simulated flip — Heads: TAILS, lost (simulated). Caption stresses it is not on-chain. |
+| 3 | 0:26–0:44 | Connect → "Injected Wallet"; balance 1.56 QOR; "EVM window: live". |
+| 4 | 0:44–0:57 | Real flip — Heads: HEADS, won. Stats update to 3 flips / 2 wins / streak 1. |
+| 5 | 0:57–1:14 | "Your badges" (video account: not eligible yet), then the Streak badges panel: deployer best streak 4, Double Up; tiers listed. |
+| 6 | 1:14–1:39 | Explorer (testnet) showing the same flip as its Cosmos transaction: status success, block #10,368,708, MsgEthereumTx. |
+| 7 | 1:39–1:49 | Title card (cover.png) with the flip hash, the StreakBadge address, and the badge-claim hash in full. |
+
+### Transaction shown in the video
+
+- **Flip (Heads, won):**
+  EVM `0x3bec01ae92bd058ba0fdcd895310ce8de7fb0bf662d747dd98d4fdc9b6e8e631`
+  (block 10368708, receipt success).
+  Cosmos `65115FC8A0806AB4D76726DFB2FC062BBB218DA0A1488912FD3F03791E04D5D8`
+  — the hash the explorer indexes; shown on the explorer page in scene 6.
+- Receipt verified on-chain after recording; contract totals after the
+  take: 22 flips, 13 wins.
+
+### Deviations from the plan
+
+- **Injected wallet instead of QoreX (scene 3):** same as v1 — the QoreX
+  browser extension cannot be automated in this sandbox, and QoreX does
+  not support `eth_sendTransaction` on EVM anyway. The take used the
+  injected EIP-1193 wallet; signing happened in the recording script,
+  never on screen. The window was genuinely opened by a hybrid-signed
+  transaction, and the app shows it live.
+- **Explorer via Cosmos hash (scene 6):** same as v1 — the explorer's
+  `/tx/` route only resolves Cosmos hashes, so the take navigates to the
+  flip's Cosmos hash (derived live from the flip receipt).
+- **No voiceover:** same as v1 — silent with burned-in scene captions
+  (ffmpeg drawtext).
+- **The on-camera flip was predicted to win:** on Diana the outcome is
+  `keccak256(0, sender, totalFlips)` — fully deterministic (see
+  `docs/randomness.md`). Before recording, the outcome for the video
+  account at totalFlips=21 was computed off-chain (HEADS), so the take
+  guessed Heads and won. The caption claims only that the contract
+  settles the flip on-chain; it claims no luck, and the video never
+  presents the win as a feat of chance.
+- **The flip hash is recovered from the event log, not the page:** the
+  app shows only a shortened tx hash as text (no link), so the recorder
+  reads the full hash from the `FlipResult` event the flip emitted
+  (`eth_getLogs` from the scene's start block).
+- **Dev-server proxy fix (needed for scene 3):** the first v2 take
+  failed because the window-status panel never loaded: vite's HTTP proxy
+  does not read `https_proxy`, so in this sandbox its upstream TLS
+  handshake to the LCD failed. `vite.config.ts` now routes the LCD
+  proxy through `https_proxy` when set (`https-proxy-agent`, dev
+  dependency). The live static site is unaffected — it never had the
+  proxy, and the panel's documented limitation there is unchanged.

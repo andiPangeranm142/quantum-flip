@@ -70,6 +70,7 @@ describe("QuantumFlip contract", () => {
   let contract: Address;
   let player1: ReturnType<typeof mnemonicToAccount>;
   let player2: ReturnType<typeof mnemonicToAccount>;
+  let player3: ReturnType<typeof mnemonicToAccount>;
 
   before(async () => {
     const provider = Ganache.provider({
@@ -83,6 +84,7 @@ describe("QuantumFlip contract", () => {
     // the node's default gas limit, which is too low for a deployment).
     player1 = mnemonicToAccount(TEST_MNEMONIC, { addressIndex: 0 });
     player2 = mnemonicToAccount(TEST_MNEMONIC, { addressIndex: 1 });
+    player3 = mnemonicToAccount(TEST_MNEMONIC, { addressIndex: 2 });
 
     const hash = await clients.wallet.deployContract({
       abi: quantumFlipAbi,
@@ -220,5 +222,58 @@ describe("QuantumFlip contract", () => {
     assert.ok(p1.currentStreak <= p1.bestStreak, "current streak can never exceed best streak");
     assert.ok(p1.bestStreak <= p1.flips);
     assert.equal(await clients.public.readContract({ address: contract, abi: quantumFlipAbi, functionName: "playerCount" }), 2n, "no duplicate players");
+  });
+
+  it("resets the current streak on a loss and keeps the best streak", async () => {
+    // Outcomes on Ganache are effectively random, so flip until player 3
+    // has won at least once and then lost at least once (bounded loop).
+    let sawWin = false;
+    let sawLossAfterWin = false;
+    for (let i = 0; i < 100 && !sawLossAfterWin; i++) {
+      const hash = await clients.wallet.writeContract({
+        address: contract,
+        abi: quantumFlipAbi,
+        functionName: "flip",
+        args: [i % 2 === 0],
+        account: player3,
+        chain: localChain,
+      });
+      const receipt = await clients.public.waitForTransactionReceipt({ hash });
+      assert.equal(receipt.status, "success");
+      const stats = (await clients.public.readContract({
+        address: contract, abi: quantumFlipAbi, functionName: "getStats", args: [player3.address],
+      })) as unknown as { wins: bigint; currentStreak: bigint; bestStreak: bigint };
+      if (stats.bestStreak > 0n) sawWin = true;
+      if (sawWin && stats.wins > 0n && stats.currentStreak === 0n) sawLossAfterWin = true;
+    }
+    assert.ok(sawWin, "player 3 should win at least once in 100 flips");
+    assert.ok(sawLossAfterWin, "player 3 should lose after winning at least once in 100 flips");
+    const finalStats = (await clients.public.readContract({
+      address: contract, abi: quantumFlipAbi, functionName: "getStats", args: [player3.address],
+    })) as unknown as { currentStreak: bigint; bestStreak: bigint };
+    assert.equal(finalStats.currentStreak, 0n, "current streak must be 0 right after a loss");
+    assert.ok(finalStats.bestStreak >= 1n, "best streak must survive the loss");
+  });
+
+  it("getStats matches the stats mapping, and a new address has zero stats", async () => {
+    for (const player of [player1, player2, player3]) {
+      const viaGetter = (await clients.public.readContract({
+        address: contract, abi: quantumFlipAbi, functionName: "getStats", args: [player.address],
+      })) as unknown as { flips: bigint; wins: bigint; currentStreak: bigint; bestStreak: bigint };
+      const viaMapping = (await clients.public.readContract({
+        address: contract, abi: quantumFlipAbi, functionName: "stats", args: [player.address],
+      })) as [bigint, bigint, bigint, bigint];
+      assert.deepEqual(
+        [viaGetter.flips, viaGetter.wins, viaGetter.currentStreak, viaGetter.bestStreak],
+        viaMapping,
+        "getStats and stats must agree",
+      );
+    }
+    const stranger = mnemonicToAccount(TEST_MNEMONIC, { addressIndex: 9 });
+    const zero = (await clients.public.readContract({
+      address: contract, abi: quantumFlipAbi, functionName: "getStats", args: [stranger.address],
+    })) as unknown as { flips: bigint; wins: bigint; currentStreak: bigint; bestStreak: bigint };
+    assert.deepEqual([zero.flips, zero.wins, zero.currentStreak, zero.bestStreak], [0n, 0n, 0n, 0n]);
+    assert.equal(await clients.public.readContract({ address: contract, abi: quantumFlipAbi, functionName: "playerCount" }), 3n, "reading stats must not register a player");
   });
 });

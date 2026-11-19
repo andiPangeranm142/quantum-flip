@@ -5,8 +5,9 @@
   "type": "module",
   "description": "Quantum Flip: a free-to-play on-chain coin-flip game on the QoreChain testnet (qorechain-diana). Every flip is an EVM transaction admitted only inside a post-quantum authorisation window, so each move is quantum-safe by construction.",
   "scripts": {
-    "compile": "npx solc@0.8.24 --optimize --abi --bin -o out contracts/QuantumFlip.sol && node scripts/build-artifact.mjs",
+    "compile": "npx solc@0.8.24 --optimize --abi --bin -o out contracts/QuantumFlip.sol contracts/StreakBadge.sol && node scripts/build-artifact.mjs",
     "deploy": "tsx --env-file=.env scripts/deploy.ts",
+    "deploy-streak-badge": "tsx --env-file=.env scripts/deploy-streak-badge.ts",
     "window": "tsx --env-file=.env scripts/window.ts",
     "test": "tsx --test test/*.test.ts",
     "typecheck": "tsc --noEmit",
@@ -32,6 +33,7 @@
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.0",
     "ganache": "^7.9.2",
+    "https-proxy-agent": "^9.1.0",
     "tsx": "^4.19.0",
     "typescript": "^5.6.3",
     "vite": "^5.4.0"

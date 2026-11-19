@@ -20,3 +20,18 @@ export const QUANTUM_FLIP_ADDRESS: `0x${string}` | "" = isAddress(raw)
   : "";
 
 export const CONTRACT_DEPLOYED = QUANTUM_FLIP_ADDRESS !== "";
+
+/**
+ * The deployed StreakBadge companion contract address, read from the
+ * build-time environment. Empty string means the badge contract has not
+ * been deployed yet — the UI must not show the badge section in that case.
+ *
+ * A malformed value is treated the same as unset: never trust a bad address.
+ */
+const rawBadge = (import.meta.env.VITE_STREAK_BADGE_ADDRESS ?? "").trim();
+
+export const STREAK_BADGE_ADDRESS: `0x${string}` | "" = isAddress(rawBadge)
+  ? (rawBadge as `0x${string}`)
+  : "";
+
+export const BADGE_DEPLOYED = STREAK_BADGE_ADDRESS !== "";

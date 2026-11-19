@@ -133,6 +133,34 @@ After the initial build, the agent continued under the same workflow:
   were re-checked end-to-end before the deadline; every claim in this
   file was re-verified against the chain, the repo, or the fest site.
 
+## Quality push (19 Nov 2026)
+
+- **Randomness correction.** Verified on-chain that the EVM `BLOCKHASH`
+  opcode always returns 0 on Diana, so flips are fully deterministic;
+  corrected the README, the NatSpec, and the frontend footer, and added
+  `scripts/probe-blockhash.mjs` + `docs/randomness.md` (commit
+  `f10033f`). No "unpredictable" claim remains anywhere.
+- **StreakBadge companion contract.** Wrote, tested, deployed, and
+  verified a separate contract that reads `bestStreak` on-chain from
+  the flip contract and issues tiered badges; the flip contract itself
+  was never modified or redeployed. First badge issued to the deployer
+  (bestStreak 4). See the README for the exact addresses, hashes, and
+  the honest limits of what a badge proves.
+- **Tests 5 → 16.** Added a StreakBadge suite (both contracts on a
+  local chain, real flips to build streaks) and two more flip tests;
+  all 16 pass.
+- **Demo mock mode + badges.** The demo works without a wallet: a
+  clearly-labelled SIMULATED flip (browser-only) plus a public
+  streak-badge panel reading live chain data. Redeployed to GitHub
+  Pages; the render check passes 11/11 on the live site.
+- **Demo video v2.** Re-recorded in one take (real app, one real
+  testnet flip, StreakBadge panel, explorer), 1:49, silent with
+  burned-in captions; the flip was verified on-chain afterwards. The
+  take also exposed and fixed a dev-server bug: vite's HTTP proxy did
+  not read `https_proxy`, so the window-status panel could not load in
+  this sandbox (`vite.config.ts` now routes the LCD proxy through it
+  when set). See `docs/demo-video.md`.
+
 ## Secrets check
 
 Before each commit, the repo is checked for secrets: `.env` is
