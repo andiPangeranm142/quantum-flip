@@ -13,7 +13,7 @@
 //   --no-predict      skip the flip-prediction check, only probe BLOCKHASH
 //
 // How the BLOCKHASH probe works: eth_call with a state override places
-// this 15-byte program at a scratch address and runs it:
+// this 13-byte program at a scratch address and runs it:
 //
 //   0x436001034060005260206000f3
 //     43       NUMBER            (current block number)
