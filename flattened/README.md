@@ -21,7 +21,10 @@ contract only.
    contents of `QuantumFlip.flattened.sol` into the "Contract Source Code"
    textarea.
 3. Set Blockchain = QoreChain. Run the audit (150 QOR testnet per run,
-   dashboard-internal charge; the on-chain wallet balance does not move).
+   paid ON-CHAIN from the connected dashboard wallet — the fee is a real
+   MsgSend to qor1wv0fvt5qzx7gllk9ckzv3u6ypceaqq8evuny0h; make sure the
+   wallet holds ≥150 QOR + gas BEFORE running. The faucet alone
+   (100 QOR/24h) is NOT enough — top up from the deployer first).
 4. Wait for the result. Record score / risk / quantum readiness / findings.
 5. Export the PDF and save it as `docs/QCAI-audit-stage1.pdf`
    (stage 2: `docs/QCAI-audit-stage2.pdf`), then triage every finding in
@@ -30,8 +33,11 @@ contract only.
 Notes: the dashboard keeps NO audit history and offers NO stage-2 option
 on an existing result — stage 2 is a fresh audit with the identical
 source. The dashboard failed twice on BillPay Guard's stage 2 on 25 Nov
-("No wallet found" toast); if a run fails, do not create a wallet or
-import keys — stop and report.
+("No wallet found" toast) because the account had no dashboard wallet;
+the fix (approved by the user 25 Nov 09:11) was creating one via the
+dashboard's own "Create a new wallet" button (wallet "SealedBid"
+qor14pwajnz3pn6uzxkchjv856q8639m6uve6hwmc4, funded by top-ups from the
+deployer).
 
 ## Auditor context
 
